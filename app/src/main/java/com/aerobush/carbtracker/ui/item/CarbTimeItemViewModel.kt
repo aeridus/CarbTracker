@@ -26,7 +26,8 @@ import java.time.OffsetDateTime
 class CarbTimeItemViewModel(
     private val carbTimeItemsRepository: CarbTimeItemsRepository
 ) : ViewModel() {
-    private val dayThresholdHour = 4
+    // Based on local time
+    private val dayThresholdHour = 4L
 
 /*    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -52,16 +53,7 @@ class CarbTimeItemViewModel(
                 var idealMinCarbServingsPerMeal = 2
                 var idealMaxCarbServingsPerMeal = 4
 
-                var dayThreshold = TimeUtils.getCurrentTime()
-                if (dayThreshold.hour < dayThresholdHour)
-                {
-                    dayThreshold = dayThreshold.minusDays(1)
-                }
-                dayThreshold = dayThreshold
-                    .withHour(dayThresholdHour)
-                    .withMinute(0)
-                    .withSecond(0)
-                    .withNano(0)
+                val dayThreshold = TimeUtils.getDayThreshold(dayThresholdHour)
 
                 val totalDayItems = carbTimeItems
                     .filter { TimeUtils.toOffsetDataTime(it.time) >= dayThreshold }

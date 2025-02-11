@@ -8,7 +8,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,8 +33,6 @@ import com.aerobush.carbtracker.ui.item.CarbTimeItemViewModel
 import com.aerobush.carbtracker.ui.theme.CarbTrackerTheme
 import kotlinx.coroutines.launch
 import java.time.Duration
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +53,7 @@ fun CarbTracker(
     modifier: Modifier = Modifier,
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // TODO: Send notifications, run in background, show carb budget graphic, save preferences, clear stale items
+    // TODO: Show carb budget graphic, run in background, send notifications, save preferences, clear stale items
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
