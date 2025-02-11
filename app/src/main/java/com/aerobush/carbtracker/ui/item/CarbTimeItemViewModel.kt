@@ -1,12 +1,5 @@
 package com.aerobush.carbtracker.ui.item
 
-import android.app.NotificationManager
-import android.content.Context
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aerobush.carbtracker.data.CarbTimeItem
@@ -26,9 +19,6 @@ import java.time.OffsetDateTime
 class CarbTimeItemViewModel(
     private val carbTimeItemsRepository: CarbTimeItemsRepository
 ) : ViewModel() {
-    // Based on local time
-    private val dayThresholdHour = 4L
-
 /*    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     val normalBuilder =
@@ -50,10 +40,10 @@ class CarbTimeItemViewModel(
                 CarbTrackerUiState()
             }
             else {
-                var idealMinCarbServingsPerMeal = 2
-                var idealMaxCarbServingsPerMeal = 4
+                var idealMinCarbServingsPerMeal = CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL
+                var idealMaxCarbServingsPerMeal = CarbTrackerConstants.MAX_CARB_SERVINGS_PER_MEAL
 
-                val dayThreshold = TimeUtils.getDayThreshold(dayThresholdHour)
+                val dayThreshold = TimeUtils.getDayThreshold(CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR)
 
                 val totalDayItems = carbTimeItems
                     .filter { TimeUtils.toOffsetDataTime(it.time) >= dayThreshold }
@@ -61,12 +51,12 @@ class CarbTimeItemViewModel(
                 if (totalDayItems >= 3)
                 {
                     // Any remaining meals for the day should be small
-                    idealMinCarbServingsPerMeal = 1
-                    idealMaxCarbServingsPerMeal = 2
+                    idealMinCarbServingsPerMeal = CarbTrackerConstants.MIN_CARB_SERVINGS_PER_SNACK
+                    idealMaxCarbServingsPerMeal = CarbTrackerConstants.MAX_CARB_SERVINGS_PER_SNACK
                 }
 
                 CarbTrackerUiState(
-                    lastTime = TimeUtils.toOffsetDataTime(carbTimeItems.last().time),
+                    lastMealTime = TimeUtils.toOffsetDataTime(carbTimeItems.last().time),
                     totalCarbServings = carbTimeItems.sumOf { it.carbServings },
                     idealMinCarbServingsPerMeal = idealMinCarbServingsPerMeal,
                     idealMaxCarbServingsPerMeal = idealMaxCarbServingsPerMeal
@@ -100,7 +90,7 @@ class CarbTimeItemViewModel(
  * UI state for CarbTracker
  */
 data class CarbTrackerUiState(
-    val lastTime: OffsetDateTime = OffsetDateTime.MIN,
+    val lastMealTime: OffsetDateTime = OffsetDateTime.MIN,
     val totalCarbServings: Int = 0,
     val idealMinCarbServingsPerMeal: Int = 2,
     val idealMaxCarbServingsPerMeal: Int = 4,

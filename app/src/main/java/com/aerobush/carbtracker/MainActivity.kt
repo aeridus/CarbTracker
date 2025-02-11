@@ -53,7 +53,7 @@ fun CarbTracker(
     modifier: Modifier = Modifier,
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // TODO: Show carb budget graphic, run in background, send notifications, save preferences, clear stale items
+    // TODO: show carb budget graphic, run in background, send notifications, save preferences, clear stale items
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -63,13 +63,22 @@ fun CarbTracker(
         onResult = { hasNotificationPermission = it }
     )
 
-    val lastTime = uiState.value.lastTime
+    val lastMealTime = uiState.value.lastMealTime
 
-    var totalHours = Duration.between(lastTime, TimeUtils.getCurrentTime()).toHours()
-    totalHours = kotlin.math.min(totalHours, 24)
+    var totalHours = 24L
+    var totalMinutes = 0L
+    TimeUtils.getDurationParts(
+        startTime = lastMealTime,
+        endTime = TimeUtils.getCurrentTime(),
+        output =  { hours, minutes ->
+            totalHours = hours
+            totalMinutes = minutes
+        }
+    )
 
     CarbTrackerPanel(
         totalHours,
+        totalMinutes,
         uiState.value.totalCarbServings,
         uiState.value.idealMinCarbServingsPerMeal,
         uiState.value.idealMaxCarbServingsPerMeal,
@@ -94,6 +103,7 @@ fun CarbTracker(
 @Composable
 fun CarbTrackerPanel(
     totalHours: Long,
+    totalMinutes: Long,
     totalCarbServings: Int,
     idealMinCarbServingsPerMeal: Int,
     idealMaxCarbServingsPerMeal: Int,
@@ -112,6 +122,27 @@ fun CarbTrackerPanel(
         stringResource(R.string.please_wait_before_eating)
     }
 
+    var timeSinceLastMeal = ""
+    if (totalHours > 0L)
+    {
+        if (totalHours == 1L)
+        {
+            timeSinceLastMeal += "$totalHours ${stringResource(R.string.hour)} "
+        }
+        else
+        {
+            timeSinceLastMeal += "$totalHours ${stringResource(R.string.hours)} "
+        }
+    }
+    if (totalMinutes == 1L)
+    {
+        timeSinceLastMeal += "$totalMinutes ${stringResource(R.string.minute)}"
+    }
+    else
+    {
+        timeSinceLastMeal += "$totalMinutes ${stringResource(R.string.minutes)}"
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -124,7 +155,7 @@ fun CarbTrackerPanel(
         )
 
         Text(
-            text = stringResource(R.string.last_meal_time, totalHours),
+            text = stringResource(R.string.last_meal_time, timeSinceLastMeal),
             modifier = Modifier
                 .padding(8.dp)
         )
@@ -187,6 +218,7 @@ fun CarbTrackerPreview() {
     CarbTrackerTheme {
         CarbTrackerPanel(
             totalHours = 2,
+            totalMinutes = 5,
             totalCarbServings = 0,
             idealMinCarbServingsPerMeal = 2,
             idealMaxCarbServingsPerMeal = 4,

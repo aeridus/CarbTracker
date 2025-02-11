@@ -4,6 +4,10 @@
     <string name="safe_to_eat">It\'s safe to eat.</string>
     <string name="please_wait_before_eating">Please wait before eating.</string>
     <string name="select_your_total_carb_servings">Select your total carb servings (15g each):</string>
-    <string name="last_meal_time">Last Meal Time: %s Hours Ago</string>
+    <string name="last_meal_time">Last Meal Time: %s Ago</string>
+    <string name="hours">Hours</string>
+    <string name="hour">Hour</string>
+    <string name="minutes">Minutes</string>
+    <string name="minute">Minute</string>
     <string name="total_carb_servings">Total carb servings in the past week: %s</string>
 </resources>

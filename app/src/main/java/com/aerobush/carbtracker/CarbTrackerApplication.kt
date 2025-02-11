@@ -20,13 +20,13 @@ class CarbTrackerApplication : Application() {
         container = AppDataContainer(this)
 
         val defaultChannel = NotificationChannel(
-            CarbTrackerConstants.normalChannelId,
+            CarbTrackerConstants.NORMAL_CHANNEL_ID,
             "Normal priority notifications",
             NotificationManager.IMPORTANCE_DEFAULT
         )
 
         val highChannel = NotificationChannel(
-            CarbTrackerConstants.highChannelId,
+            CarbTrackerConstants.HIGH_CHANNEL_ID,
             "High priority notifications",
             NotificationManager.IMPORTANCE_HIGH
         )
