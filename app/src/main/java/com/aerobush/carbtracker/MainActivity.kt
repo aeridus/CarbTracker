@@ -32,7 +32,6 @@ import com.aerobush.carbtracker.data.TimeUtils
 import com.aerobush.carbtracker.ui.item.CarbTimeItemViewModel
 import com.aerobush.carbtracker.ui.theme.CarbTrackerTheme
 import kotlinx.coroutines.launch
-import java.time.Duration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
