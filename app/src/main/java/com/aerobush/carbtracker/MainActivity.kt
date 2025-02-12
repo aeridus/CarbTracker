@@ -173,7 +173,9 @@ fun CarbTrackerPanel(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0.8f, 0.8f, 0.9f))
     ) {
         Text(
             text = phrase,
@@ -235,14 +237,14 @@ fun CarbTrackerPanel(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0.8f, 0f, 0.8f))
+                        .background(Color(0.8f, 0f, 0f))
                 )
 
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0f, 0f, 0.8f))
+                        .background(Color(0.8f, 0.8f, 0f))
                 )
 
                 Box(
@@ -256,14 +258,14 @@ fun CarbTrackerPanel(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0f, 0f, 0.8f))
+                        .background(Color(0.8f, 0.8f, 0f))
                 )
 
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0.8f, 0f, 0.8f))
+                        .background(Color(0.8f, 0f, 0f))
                 )
             }
 
