@@ -22,7 +22,7 @@ class CarbTrackerApplication : Application() {
         val normalChannel = NotificationChannel(
             CarbTrackerConstants.NORMAL_CHANNEL_ID,
             getString(R.string.normal_reminders),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         )
         normalChannel.description = getString(R.string.normal_reminders)
 

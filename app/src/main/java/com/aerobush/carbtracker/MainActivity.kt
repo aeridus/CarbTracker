@@ -69,7 +69,7 @@ fun CarbTracker(
     modifier: Modifier = Modifier,
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // TODO: app icon, save preferences (light/dark, day threshold), unit tests
+    // TODO: app icon, nav bars, save preferences (light/dark, day threshold), unit tests
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
