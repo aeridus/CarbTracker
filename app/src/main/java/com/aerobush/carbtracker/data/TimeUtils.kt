@@ -48,7 +48,7 @@ class TimeUtils {
             var totalHours = 24L
             var totalMinutes = 0L
             val durationSinceLastMeal = Duration.between(startTime, endTime)
-            if (durationSinceLastMeal > Duration.ofHours(24L)) {
+            if (durationSinceLastMeal < Duration.ofHours(24L)) {
                 totalMinutes = durationSinceLastMeal.toMinutes()
                 if (totalMinutes >= 60L)
                 {
