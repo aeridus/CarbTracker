@@ -10,4 +10,5 @@
     <string name="minutes">Minutes</string>
     <string name="minute">Minute</string>
     <string name="total_carb_servings">Total carb servings in the past week: %s</string>
+    <string name="baguette">baguette</string>
 </resources>

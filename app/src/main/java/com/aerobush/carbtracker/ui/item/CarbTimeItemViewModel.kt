@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.time.Duration
 import java.time.OffsetDateTime
 
 /**
@@ -43,7 +44,9 @@ class CarbTimeItemViewModel(
                 var idealMinCarbServingsPerMeal = CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL
                 var idealMaxCarbServingsPerMeal = CarbTrackerConstants.MAX_CARB_SERVINGS_PER_MEAL
 
-                val dayThreshold = TimeUtils.getDayThreshold(CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR)
+                val dayThreshold = TimeUtils.getDayThreshold(
+                    CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
+                )
 
                 val totalDayItems = carbTimeItems
                     .filter { TimeUtils.toOffsetDataTime(it.time) >= dayThreshold }
@@ -55,11 +58,24 @@ class CarbTimeItemViewModel(
                     idealMaxCarbServingsPerMeal = CarbTrackerConstants.MAX_CARB_SERVINGS_PER_SNACK
                 }
 
+                val totalDays = Duration.between(
+                    TimeUtils.toOffsetDataTime(carbTimeItems.first().time).toLocalDateTime(),
+                    TimeUtils.toOffsetDataTime(carbTimeItems.last().time).toLocalDateTime()
+                ).toDays().toInt() + 1
+                val idealMinCarbServingsPerWeek =
+                    (3 * CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL +
+                    CarbTrackerConstants.MIN_CARB_SERVINGS_PER_SNACK) * totalDays
+                val idealMaxCarbServingsPerWeek =
+                    (3 * CarbTrackerConstants.MAX_CARB_SERVINGS_PER_MEAL +
+                            CarbTrackerConstants.MAX_CARB_SERVINGS_PER_SNACK) * totalDays
+
                 CarbTrackerUiState(
                     lastMealTime = TimeUtils.toOffsetDataTime(carbTimeItems.last().time),
                     totalCarbServings = carbTimeItems.sumOf { it.carbServings },
                     idealMinCarbServingsPerMeal = idealMinCarbServingsPerMeal,
-                    idealMaxCarbServingsPerMeal = idealMaxCarbServingsPerMeal
+                    idealMaxCarbServingsPerMeal = idealMaxCarbServingsPerMeal,
+                    idealMinCarbServingsPerWeek = idealMinCarbServingsPerWeek,
+                    idealMaxCarbServingsPerWeek = idealMaxCarbServingsPerWeek
                 )
             }
         }.stateIn(
@@ -94,4 +110,6 @@ data class CarbTrackerUiState(
     val totalCarbServings: Int = 0,
     val idealMinCarbServingsPerMeal: Int = 2,
     val idealMaxCarbServingsPerMeal: Int = 4,
+    val idealMinCarbServingsPerWeek: Int = 7,
+    val idealMaxCarbServingsPerWeek: Int = 14
 )
