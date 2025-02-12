@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
@@ -68,7 +69,7 @@ fun CarbTracker(
     modifier: Modifier = Modifier,
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // TODO: move colors into constants, save preferences, app icon, unit tests
+    // TODO: app icon, save preferences (light/dark, day threshold), unit tests
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -175,22 +176,25 @@ fun CarbTrackerPanel(
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0.8f, 0.8f, 0.9f))
+            .background(colorScheme.background)
     ) {
         Text(
             text = phrase,
+            color = colorScheme.onBackground,
             modifier = Modifier
                 .padding(8.dp)
         )
 
         Text(
             text = stringResource(R.string.last_meal_time, timeSinceLastMeal),
+            color = colorScheme.onBackground,
             modifier = Modifier
                 .padding(8.dp)
         )
 
         Text(
             text = stringResource(R.string.select_your_total_carb_servings),
+            color = colorScheme.onBackground,
             modifier = Modifier
                 .padding(8.dp)
         )
@@ -200,15 +204,18 @@ fun CarbTrackerPanel(
             modifier = Modifier
         ) {
             items(choices) { carbServings ->
-                var backgroundColor = Color(0f, 0f, 0.8f)
+                var containerColor = colorScheme.secondary
+                var contentColor = colorScheme.onSecondary
                 if (carbServings in idealMinCarbServingsPerMeal..idealMaxCarbServingsPerMeal)
                 {
-                    backgroundColor = Color(0f, 0.8f, 0f)
+                    containerColor = colorScheme.primary
+                    contentColor = colorScheme.onPrimary
                 }
 
                 NumberButton(
                     value = carbServings,
-                    color = backgroundColor,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     onClick = {
                         onClick(carbServings)
                     }
@@ -218,6 +225,7 @@ fun CarbTrackerPanel(
 
         Text(
             text = stringResource(R.string.total_carb_servings, totalCarbServings),
+            color = colorScheme.onBackground,
             modifier = Modifier
                 .padding(8.dp)
         )
@@ -237,35 +245,35 @@ fun CarbTrackerPanel(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0.8f, 0f, 0f))
+                        .background(colorScheme.error)
                 )
 
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0.8f, 0.8f, 0f))
+                        .background(colorScheme.tertiary)
                 )
 
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(centerBarWeight)
-                        .background(Color(0f, 0.8f, 0f))
+                        .background(colorScheme.primary)
                 )
 
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0.8f, 0.8f, 0f))
+                        .background(colorScheme.tertiary)
                 )
 
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(marginWeight / 2f)
-                        .background(Color(0.8f, 0f, 0f))
+                        .background(colorScheme.error)
                 )
             }
 
@@ -304,13 +312,17 @@ fun CarbTrackerPanel(
 @Composable
 fun NumberButton(
     value: Int,
-    color: Color,
+    containerColor: Color,
+    contentColor: Color,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Button(
         onClick = { onClick(value) },
-        colors = ButtonDefaults.buttonColors(containerColor = color),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
         modifier = modifier
             .padding(8.dp)
     ) {
@@ -320,8 +332,25 @@ fun NumberButton(
 
 @Preview(showBackground = true)
 @Composable
-fun CarbTrackerPreview() {
+fun CarbTrackerPreviewLight() {
     CarbTrackerTheme {
+        CarbTrackerPanel(
+            totalHours = 2,
+            totalMinutes = 5,
+            totalCarbServings = 10,
+            idealMinCarbServingsPerMeal = 2,
+            idealMaxCarbServingsPerMeal = 4,
+            idealMinCarbServingsPerWeek = 7,
+            idealMaxCarbServingsPerWeek = 14,
+            {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CarbTrackerPreviewDark() {
+    CarbTrackerTheme(darkTheme = true) {
         CarbTrackerPanel(
             totalHours = 2,
             totalMinutes = 5,
