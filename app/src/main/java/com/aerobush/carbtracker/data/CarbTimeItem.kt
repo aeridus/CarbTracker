@@ -12,7 +12,7 @@ data class CarbTimeItem(
     @ColumnInfo(name = "carb_servings")
     val carbServings: Int,
     @ColumnInfo(name = "sent_first_reminder")
-    val sentFirstReminder: Boolean,
+    var sentFirstReminder: Boolean,
     @ColumnInfo(name = "sent_second_reminder")
-    val sentSecondReminder: Boolean
+    var sentSecondReminder: Boolean
 )

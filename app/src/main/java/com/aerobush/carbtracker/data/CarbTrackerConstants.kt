@@ -4,7 +4,7 @@ class CarbTrackerConstants {
     companion object {
         // Notifications
         const val NORMAL_CHANNEL_ID = "Normal"
-        const val HIGH_CHANNEL_ID = "High"
+        const val URGENT_CHANNEL_ID = "Urgent"
 
         // Carb Servings
         const val MIN_CARB_SERVINGS_PER_MEAL = 2

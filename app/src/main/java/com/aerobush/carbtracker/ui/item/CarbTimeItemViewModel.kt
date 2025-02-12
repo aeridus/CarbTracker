@@ -20,15 +20,6 @@ import java.time.OffsetDateTime
 class CarbTimeItemViewModel(
     private val carbTimeItemsRepository: CarbTimeItemsRepository
 ) : ViewModel() {
-/*    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-    val normalBuilder =
-        NotificationCompat.Builder(this, CarbTrackerConstants.normalChannelId)
-            .setContentTitle("Getting Hungry")
-            .setContentText("It's safe to eat now.")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setCategory(NotificationCompat.CATEGORY_REMINDER)*/
-
     /**
      * The data is retrieved from [CarbTimeItemsRepository] and mapped to the UI state.
      */

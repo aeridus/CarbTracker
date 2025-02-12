@@ -8,7 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.aerobush.carbtracker.ui.item.CarbTimeItemViewModel
 
 /**
- * Provides Factory to create instance of ViewModel for the entire Inventory app
+ * Provides Factory to create instance of ViewModel for the entire CarbTracker app
  */
 object AppViewModelProvider {
     val Factory = viewModelFactory {

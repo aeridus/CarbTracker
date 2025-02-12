@@ -7,29 +7,14 @@ import kotlinx.coroutines.flow.Flow
  */
 interface CarbTimeItemsRepository {
     /**
-     * Retrieve all the items from the the given data source.
-     */
-    fun getAllItemsStream(): Flow<List<CarbTimeItem>>
-
-    /**
-     * Retrieve all the stale items from the the given data source.
-     */
-    fun getStaleItemsStream(time: Long): Flow<List<CarbTimeItem>>
-
-    /**
-     * Retrieve all the recent items from the the given data source.
-     */
-    fun getRecentItemsStream(time: Long): Flow<List<CarbTimeItem>>
-
-    /**
-     * Retrieve an item from the given data source that matches with the [id].
-     */
-    fun getItemStream(id: Long): Flow<CarbTimeItem?>
-
-    /**
      * Insert item in the data source
      */
     suspend fun insertItem(item: CarbTimeItem)
+
+    /**
+     * Update item in the data source
+     */
+    suspend fun updateItem(item: CarbTimeItem)
 
     /**
      * Delete item from the data source
@@ -37,7 +22,37 @@ interface CarbTimeItemsRepository {
     suspend fun deleteItem(item: CarbTimeItem)
 
     /**
-     * Update item in the data source
+     * Retrieve an item from the given data source that matches with the [id].
      */
-    suspend fun updateItem(item: CarbTimeItem)
+    fun getItemStream(id: Long): Flow<CarbTimeItem?>
+
+    /**
+     * Retrieve all the items from the the given data source.
+     */
+    fun getAllItemsStream(): Flow<List<CarbTimeItem>>
+
+    /**
+     * Retrieve all the recent items from the the given data source.
+     */
+    fun getRecentItemsStream(time: Long): Flow<List<CarbTimeItem>>
+
+    /**
+     * Retrieve the last item from the the given data source.
+     */
+    suspend fun getLastItem(): CarbTimeItem?
+
+    /**
+     * Delete all the stale items from the the given data source.
+     */
+    suspend fun deleteStaleItems(time: Long)
+
+    /**
+     * Start the hungry worker.
+     */
+    fun startHungryWorker()
+
+    /**
+     * Start the stale worker.
+     */
+    fun startStaleWorker()
 }

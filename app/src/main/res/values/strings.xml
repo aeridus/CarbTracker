@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Carb Tracker</string>
+    <string name="time_to_eat_title">I\'m Starving</string>
     <string name="time_to_eat">Time to eat!</string>
+    <string name="safe_to_eat_title">Getting Hungry</string>
     <string name="safe_to_eat">It\'s safe to eat.</string>
     <string name="please_wait_before_eating">Please wait before eating.</string>
     <string name="select_your_total_carb_servings">Select your total carb servings (15g each):</string>
@@ -11,4 +13,8 @@
     <string name="minute">Minute</string>
     <string name="total_carb_servings">Total carb servings in the past week: %s</string>
     <string name="baguette">baguette</string>
+    <string name="normal_reminders">Normal reminders</string>
+    <string name="urgent_reminders">Urgent reminders</string>
+    <string name="failed_to_notify_user">Failed to notify user that it was time to eat.</string>
+    <string name="failed_to_delete_stale_items">Failed to delete stale items.</string>
 </resources>

@@ -25,9 +25,12 @@ interface CarbTimeItemDao {
     @Query("SELECT * from carb_time_items ORDER BY time ASC")
     fun getAllItems(): Flow<List<CarbTimeItem>>
 
-    @Query("SELECT * from carb_time_items WHERE time < :time ORDER BY time ASC")
-    fun getStaleItems(time: Long): Flow<List<CarbTimeItem>>
-
     @Query("SELECT * from carb_time_items WHERE time >= :time ORDER BY time ASC")
     fun getRecentItems(time: Long): Flow<List<CarbTimeItem>>
+
+    @Query("SELECT * from carb_time_items ORDER BY time DESC LIMIT 1")
+    suspend fun getLastItem(): CarbTimeItem?
+
+    @Query("DELETE from carb_time_items WHERE time < :time")
+    suspend fun deleteStaleItems(time: Long)
 }

@@ -68,7 +68,7 @@ fun CarbTracker(
     modifier: Modifier = Modifier,
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // TODO: run in background, send notifications, save preferences, clear stale items
+    // TODO: move colors into constants, save preferences
     val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 

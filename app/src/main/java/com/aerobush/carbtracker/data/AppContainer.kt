@@ -17,6 +17,14 @@ class AppDataContainer(private val context: Context) : AppContainer {
      * Implementation for [CarbTimeItemsRepository]
      */
     override val carbTimeItemsRepository: CarbTimeItemsRepository by lazy {
-        OfflineCarbTimeItemsRepository(CarbTrackerDatabase.getDatabase(context).carbTimeItemDao())
+        val carbTimeItemsRepo = OfflineCarbTimeItemsRepository(
+            context,
+            CarbTrackerDatabase.getDatabase(context).carbTimeItemDao()
+        )
+
+        carbTimeItemsRepo.startHungryWorker()
+        carbTimeItemsRepo.startStaleWorker()
+
+        carbTimeItemsRepo
     }
 }
