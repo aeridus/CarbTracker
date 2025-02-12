@@ -35,12 +35,12 @@ class CarbTimeItemViewModel(
                 var idealMinCarbServingsPerMeal = CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL
                 var idealMaxCarbServingsPerMeal = CarbTrackerConstants.MAX_CARB_SERVINGS_PER_MEAL
 
-                val dayThreshold = TimeUtils.getDayThreshold(
+                val dayThreshold = TimeUtils.getDayThresholdEpochMilli(
                     CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
                 )
 
                 val totalDayItems = carbTimeItems
-                    .filter { TimeUtils.toOffsetDataTime(it.time) >= dayThreshold }
+                    .filter { it.time >= dayThreshold }
                     .size
                 if (totalDayItems >= 3)
                 {
@@ -50,8 +50,8 @@ class CarbTimeItemViewModel(
                 }
 
                 val totalDays = Duration.between(
-                    TimeUtils.toOffsetDataTime(carbTimeItems.first().time).toLocalDateTime(),
-                    TimeUtils.toOffsetDataTime(carbTimeItems.last().time).toLocalDateTime()
+                    TimeUtils.toOffsetDateTime(carbTimeItems.first().time).toLocalDateTime(),
+                    TimeUtils.toOffsetDateTime(carbTimeItems.last().time).toLocalDateTime()
                 ).toDays().toInt() + 1
                 val idealMinCarbServingsPerWeek =
                     (3 * CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL +
@@ -61,7 +61,7 @@ class CarbTimeItemViewModel(
                             CarbTrackerConstants.MAX_CARB_SERVINGS_PER_SNACK) * totalDays
 
                 CarbTrackerUiState(
-                    lastMealTime = TimeUtils.toOffsetDataTime(carbTimeItems.last().time),
+                    lastMealTime = TimeUtils.toOffsetDateTime(carbTimeItems.last().time),
                     totalCarbServings = carbTimeItems.sumOf { it.carbServings },
                     idealMinCarbServingsPerMeal = idealMinCarbServingsPerMeal,
                     idealMaxCarbServingsPerMeal = idealMaxCarbServingsPerMeal,

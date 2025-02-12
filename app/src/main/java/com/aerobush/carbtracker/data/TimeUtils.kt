@@ -17,7 +17,7 @@ class TimeUtils {
             return time.toInstant().toEpochMilli()
         }
 
-        fun toOffsetDataTime(time: Long): OffsetDateTime
+        fun toOffsetDateTime(time: Long): OffsetDateTime
         {
             return OffsetDateTime.ofInstant(
                 Instant.ofEpochMilli(time),
@@ -25,19 +25,22 @@ class TimeUtils {
             )
         }
 
-        fun getDayThreshold(dayThresholdHour: Long): OffsetDateTime {
-            var dayThreshold = getCurrentTime()
-            if (dayThreshold.toLocalDateTime().hour < dayThresholdHour)
+        fun getDayThresholdEpochMilli(dayThresholdHour: Long): Long {
+            var dayThreshold = OffsetDateTime.now()
+
+            // We want to look at the data from before midnight
+            if (dayThreshold.hour < dayThresholdHour)
             {
                 dayThreshold = dayThreshold.minusDays(1)
             }
-            val hourToUse = dayThreshold
-                .plusHours(dayThresholdHour - dayThreshold.toLocalDateTime().hour).hour
-            return dayThreshold
-                .withHour(hourToUse)
+
+            dayThreshold = dayThreshold
+                .withHour(dayThresholdHour.toInt())
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0)
+
+            return toEpochMilli(dayThreshold)
         }
 
         fun getDurationParts(
@@ -53,7 +56,7 @@ class TimeUtils {
                 if (totalMinutes >= 60L)
                 {
                     totalHours = totalMinutes / 60L
-                    totalMinutes = totalMinutes - totalHours * 60L
+                    totalMinutes -= totalHours * 60L
                 }
                 else
                 {

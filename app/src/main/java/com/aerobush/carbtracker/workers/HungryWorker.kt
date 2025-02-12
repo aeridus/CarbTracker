@@ -24,7 +24,7 @@ class HungryWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                 val lastCarbTimeItem = carbTimeItemsRepo.getLastItem()
                 if (lastCarbTimeItem != null)
                 {
-                    val lastCarbTime = TimeUtils.toOffsetDataTime(lastCarbTimeItem.time)
+                    val lastCarbTime = TimeUtils.toOffsetDateTime(lastCarbTimeItem.time)
 
                     var totalHours = 24L
                     TimeUtils.getDurationParts(
