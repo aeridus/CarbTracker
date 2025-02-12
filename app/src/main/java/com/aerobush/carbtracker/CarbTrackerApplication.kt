@@ -21,14 +21,14 @@ class CarbTrackerApplication : Application() {
 
         val normalChannel = NotificationChannel(
             CarbTrackerConstants.NORMAL_CHANNEL_ID,
-            getString(R.string.normal_reminders),
+            getString(R.string.normal_reminders_title),
             NotificationManager.IMPORTANCE_HIGH
         )
         normalChannel.description = getString(R.string.normal_reminders)
 
         val urgentChannel = NotificationChannel(
             CarbTrackerConstants.URGENT_CHANNEL_ID,
-            getString(R.string.urgent_reminders),
+            getString(R.string.urgent_reminders_title),
             NotificationManager.IMPORTANCE_HIGH
         )
         urgentChannel.description = getString(R.string.urgent_reminders)

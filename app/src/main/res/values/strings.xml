@@ -13,7 +13,9 @@
     <string name="minute">Minute</string>
     <string name="total_carb_servings">Total carb servings in the past week: %s</string>
     <string name="baguette">baguette</string>
+    <string name="normal_reminders_title">Normal Reminders</string>
     <string name="normal_reminders">Normal reminders</string>
+    <string name="urgent_reminders_title">Urgent Reminders</string>
     <string name="urgent_reminders">Urgent reminders</string>
     <string name="failed_to_notify_user">Failed to notify user that it was time to eat.</string>
     <string name="failed_to_delete_stale_items">Failed to delete stale items.</string>

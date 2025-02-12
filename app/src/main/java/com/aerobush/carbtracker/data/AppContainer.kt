@@ -23,7 +23,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
         )
 
         carbTimeItemsRepo.startHungryWorker()
-        carbTimeItemsRepo.startStaleWorker()
 
         carbTimeItemsRepo
     }

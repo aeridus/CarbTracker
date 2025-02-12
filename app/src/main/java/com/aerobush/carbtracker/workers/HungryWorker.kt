@@ -76,6 +76,6 @@ class HungryWorker(context: Context, params: WorkerParameters) : CoroutineWorker
     }
 
     companion object {
-        const val DELAY_TIME_MILLIS = 15_000L
+        const val DELAY_TIME_MILLIS = 5_000L
     }
 }

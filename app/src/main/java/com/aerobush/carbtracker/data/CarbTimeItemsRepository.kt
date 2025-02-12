@@ -50,9 +50,4 @@ interface CarbTimeItemsRepository {
      * Start the hungry worker.
      */
     fun startHungryWorker()
-
-    /**
-     * Start the stale worker.
-     */
-    fun startStaleWorker()
 }
