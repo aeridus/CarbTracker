@@ -30,11 +30,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aerobush.carbtracker.data.TimeUtils
 import com.aerobush.carbtracker.ui.item.CarbTimeItemViewModel
 import com.aerobush.carbtracker.ui.theme.CarbTrackerTheme
 import kotlinx.coroutines.launch
@@ -69,7 +64,7 @@ fun CarbTracker(
     modifier: Modifier = Modifier,
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     var hasNotificationPermission = false
@@ -78,22 +73,9 @@ fun CarbTracker(
         onResult = { hasNotificationPermission = it }
     )
 
-    val lastMealTime = uiState.value.lastMealTime
-
-    var totalHours = 24L
-    var totalMinutes = 0L
-    TimeUtils.getDurationParts(
-        startTime = lastMealTime,
-        endTime = TimeUtils.getCurrentTime(),
-        output =  { hours, minutes ->
-            totalHours = hours
-            totalMinutes = minutes
-        }
-    )
-
     CarbTrackerPanel(
-        totalHours,
-        totalMinutes,
+        uiState.value.totalHours,
+        uiState.value.totalMinutes,
         uiState.value.totalCarbServings,
         uiState.value.idealMinCarbServingsPerMeal,
         uiState.value.idealMaxCarbServingsPerMeal,
@@ -107,7 +89,7 @@ fun CarbTracker(
             }
 
             // Prevent eating if it hasn't been long enough
-            if (totalHours >= 3) {
+            if (uiState.value.totalHours >= 3) {
                 coroutineScope.launch {
                     viewModel.saveCarbTimeItem(it)
                 }
@@ -120,8 +102,8 @@ fun CarbTracker(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarbTrackerPanel(
-    totalHours: Long,
-    totalMinutes: Long,
+    totalHours: Int,
+    totalMinutes: Int,
     totalCarbServings: Int,
     idealMinCarbServingsPerMeal: Int,
     idealMaxCarbServingsPerMeal: Int,
@@ -144,20 +126,18 @@ fun CarbTrackerPanel(
 
     // Pretty format for time since last meal
     var timeSinceLastMeal = ""
-    if (totalHours > 0L)
-    {
-        timeSinceLastMeal += if (totalHours == 1L) {
+    if (totalHours > 0) {
+        timeSinceLastMeal += if (totalHours == 1) {
             "$totalHours ${stringResource(R.string.hour)} "
-        } else {
+        }
+        else {
             "$totalHours ${stringResource(R.string.hours)} "
         }
     }
-    timeSinceLastMeal += if (totalMinutes == 1L)
-    {
+    timeSinceLastMeal += if (totalMinutes == 1) {
         "$totalMinutes ${stringResource(R.string.minute)}"
     }
-    else
-    {
+    else {
         "$totalMinutes ${stringResource(R.string.minutes)}"
     }
 
@@ -165,10 +145,7 @@ fun CarbTrackerPanel(
     val maxBudget = idealMaxCarbServingsPerWeek + idealMinCarbServingsPerWeek
     val marginWeight = (idealMinCarbServingsPerWeek * 1f) / maxBudget
     val centerBarWeight = 1f - marginWeight
-    val carbBudget = kotlin.math.min(totalCarbServings, maxBudget) *
-            1f / maxBudget
-    var budgetPosition by remember { mutableFloatStateOf(0f) }
-    budgetPosition = carbBudget
+    val carbBudget = kotlin.math.min(totalCarbServings, maxBudget) * 1f / maxBudget
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -278,7 +255,7 @@ fun CarbTrackerPanel(
 
             // We just want to show the thumb, no background
             Slider(
-                value = budgetPosition,
+                value = carbBudget,
                 onValueChange = { },
                 valueRange = 0f..1f,
                 colors = SliderColors(
