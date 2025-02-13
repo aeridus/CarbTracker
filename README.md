@@ -17,3 +17,5 @@ This app helps track regularly timed carb intake throughout the day, to even out
 * The last week of data is tracked to see if your carb intake is within the ideal range
 
 ### Example Screenshots
+![Light Theme For App](CarbTrackerLight.png)
+![Dark Theme For App](CarbTrackerDark.png)
