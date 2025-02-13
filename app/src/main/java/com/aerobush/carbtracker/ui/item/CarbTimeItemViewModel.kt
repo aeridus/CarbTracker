@@ -6,12 +6,18 @@ import com.aerobush.carbtracker.data.CarbTimeItem
 import com.aerobush.carbtracker.data.CarbTimeItemsRepository
 import com.aerobush.carbtracker.data.CarbTrackerConstants
 import com.aerobush.carbtracker.data.TimeUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.OffsetDateTime
 
 /**
  * ViewModel to manage carb time items in the Room database.
@@ -20,7 +26,22 @@ class CarbTimeItemViewModel(
     private val carbTimeItemsRepository: CarbTimeItemsRepository
 ) : ViewModel() {
     /**
-     * Changes less often, so we want this to be a separate data flow
+     * Changes frequently
+     */
+    private val _currentTimeState = MutableStateFlow<OffsetDateTime>(TimeUtils.getCurrentTime())
+    private val currentTimeState: StateFlow<OffsetDateTime> = _currentTimeState
+
+    init {
+        viewModelScope.launch {
+            while (isActive) {
+                _currentTimeState.value = TimeUtils.getCurrentTime()
+                delay(REFRESH_MILLIS)
+            }
+        }
+    }
+
+    /**
+     * Changes less often
      */
     private val carbTimeItemsState: StateFlow<List<CarbTimeItem>> = carbTimeItemsRepository
         .getAllItemsStream()
@@ -34,17 +55,16 @@ class CarbTimeItemViewModel(
         )
 
     /**
-     * We want this to update with time changes
+     * We want this to update with time changes or database changes
      */
-    val uiState: StateFlow<CarbTrackerUiState> = carbTimeItemsState
-        .map { carbTimeItems ->
+    val uiState: StateFlow<CarbTrackerUiState> = currentTimeState
+        .combine(carbTimeItemsState) { currentTime, carbTimeItems ->
             if (carbTimeItems.isEmpty())
             {
                 CarbTrackerUiState()
             }
             else {
                 val lastMealTime = TimeUtils.toOffsetDateTime(carbTimeItems.last().time)
-                val currentTime = TimeUtils.getCurrentTime()
                 val dayThreshold = TimeUtils.getDayThresholdEpochMilli(
                     CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
                 )
@@ -80,7 +100,7 @@ class CarbTimeItemViewModel(
                 ).toDays().toInt() + 1
                 val idealMinCarbServingsPerWeek =
                     (3 * CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL +
-                    CarbTrackerConstants.MIN_CARB_SERVINGS_PER_SNACK) * totalDays
+                            CarbTrackerConstants.MIN_CARB_SERVINGS_PER_SNACK) * totalDays
                 val idealMaxCarbServingsPerWeek =
                     (3 * CarbTrackerConstants.MAX_CARB_SERVINGS_PER_MEAL +
                             CarbTrackerConstants.MAX_CARB_SERVINGS_PER_SNACK) * totalDays
@@ -116,6 +136,7 @@ class CarbTimeItemViewModel(
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
+        private const val REFRESH_MILLIS = 15_000L
     }
 }
 
