@@ -94,10 +94,15 @@ class CarbTimeItemViewModel(
                 }
 
                 // Calculate ideal carb servings per week
-                val totalDays = Duration.between(
+                var totalDays = Duration.between(
                     TimeUtils.toOffsetDateTime(carbTimeItems.first().time).toLocalDateTime(),
                     TimeUtils.toOffsetDateTime(carbTimeItems.last().time).toLocalDateTime()
                 ).toDays().toInt() + 1
+                if (carbTimeItems.last().time < dayThreshold) {
+                    // We want to budget for an empty stomach
+                    ++totalDays
+                }
+
                 val idealMinCarbServingsPerWeek =
                     (3 * CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL +
                             CarbTrackerConstants.MIN_CARB_SERVINGS_PER_SNACK) * totalDays
