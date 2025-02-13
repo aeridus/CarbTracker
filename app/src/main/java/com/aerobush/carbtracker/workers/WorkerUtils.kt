@@ -64,6 +64,7 @@ class WorkerUtils {
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
 
             // Show the notification
