@@ -15,7 +15,7 @@ class OfflineCarbTimeItemsRepository(
     override suspend fun insertItem(item: CarbTimeItem) {
         carbTimeItemDao.insert(item)
         carbTimeItemDao.deleteStaleItems(
-            TimeUtils.toEpochMilli(TimeUtils.getCurrentTime().minusDays(7))
+            TimeUtils.toEpochMilli(TimeUtils.getCurrentTime().minusDays(10))
         )
     }
 

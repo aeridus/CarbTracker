@@ -59,15 +59,18 @@ class CarbTimeItemViewModel(
      */
     val uiState: StateFlow<CarbTrackerUiState> = currentTimeState
         .combine(carbTimeItemsState) { currentTime, carbTimeItems ->
-            if (carbTimeItems.isEmpty())
+            val dayThreshold = TimeUtils.getDayThresholdEpochMilli(
+                CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
+            )
+            val weekAgoThreshold = dayThreshold - Duration.ofDays(7).toMillis()
+            val carbWeekItems = carbTimeItems.filter { it.time >= weekAgoThreshold }
+
+            if (carbWeekItems.isEmpty())
             {
                 CarbTrackerUiState()
             }
             else {
-                val lastMealTime = TimeUtils.toOffsetDateTime(carbTimeItems.last().time)
-                val dayThreshold = TimeUtils.getDayThresholdEpochMilli(
-                    CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
-                )
+                val lastMealTime = TimeUtils.toOffsetDateTime(carbWeekItems.last().time)
 
                 var totalHours = 24
                 var totalMinutes = 0
@@ -83,7 +86,7 @@ class CarbTimeItemViewModel(
                 var idealMinCarbServingsPerMeal = CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL
                 var idealMaxCarbServingsPerMeal = CarbTrackerConstants.MAX_CARB_SERVINGS_PER_MEAL
 
-                val totalDayItems = carbTimeItems
+                val totalDayItems = carbWeekItems
                     .filter { it.time >= dayThreshold }
                     .size
                 if (totalDayItems >= 3)
@@ -94,14 +97,10 @@ class CarbTimeItemViewModel(
                 }
 
                 // Calculate ideal carb servings per week
-                var totalDays = Duration.between(
-                    TimeUtils.toOffsetDateTime(carbTimeItems.first().time).toLocalDateTime(),
-                    TimeUtils.toOffsetDateTime(carbTimeItems.last().time).toLocalDateTime()
-                ).toDays().toInt() + 1
-                if (carbTimeItems.last().time < dayThreshold) {
-                    // We want to budget for an empty stomach
-                    ++totalDays
-                }
+                val firstCarbTime = carbWeekItems.first().time
+                val millisPerDay = Duration.ofDays(1).toMillis()
+                val totalEmptyDays = (firstCarbTime - weekAgoThreshold) / millisPerDay
+                val totalDays = 7 - totalEmptyDays.toInt() + 1
 
                 val idealMinCarbServingsPerWeek =
                     (3 * CarbTrackerConstants.MIN_CARB_SERVINGS_PER_MEAL +
@@ -113,7 +112,7 @@ class CarbTimeItemViewModel(
                 CarbTrackerUiState(
                     totalHours = totalHours,
                     totalMinutes = totalMinutes,
-                    totalCarbServings = carbTimeItems.sumOf { it.carbServings },
+                    totalCarbServings = carbWeekItems.sumOf { it.carbServings },
                     idealMinCarbServingsPerMeal = idealMinCarbServingsPerMeal,
                     idealMaxCarbServingsPerMeal = idealMaxCarbServingsPerMeal,
                     idealMinCarbServingsPerWeek = idealMinCarbServingsPerWeek,
