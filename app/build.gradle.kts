@@ -75,4 +75,7 @@ dependencies {
 
     // Notifications
     implementation("androidx.core:core-ktx:1.15.0")
+
+    // Preferences Data Store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

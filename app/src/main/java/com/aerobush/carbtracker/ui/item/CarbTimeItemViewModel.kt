@@ -6,16 +6,19 @@ import com.aerobush.carbtracker.data.CarbTimeItem
 import com.aerobush.carbtracker.data.CarbTimeItemsRepository
 import com.aerobush.carbtracker.data.CarbTrackerConstants
 import com.aerobush.carbtracker.data.TimeUtils
+import com.aerobush.carbtracker.data.UserPreferencesRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Duration
 import java.time.OffsetDateTime
 
@@ -23,7 +26,8 @@ import java.time.OffsetDateTime
  * ViewModel to manage carb time items in the Room database.
  */
 class CarbTimeItemViewModel(
-    private val carbTimeItemsRepository: CarbTimeItemsRepository
+    private val carbTimeItemsRepository: CarbTimeItemsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     /**
      * Changes frequently
@@ -43,16 +47,26 @@ class CarbTimeItemViewModel(
     /**
      * Changes based on user input
      */
-    private val _dayThresholdHourState = MutableStateFlow<Int>(
-        CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
-    )
-    private val dayThresholdHourState: StateFlow<Int> = _dayThresholdHourState
+    private val dayThresholdHourState: StateFlow<Int> =
+        userPreferencesRepository.dayThresholdHour.map { dayThresholdHour ->
+            dayThresholdHour
+        }.stateIn(
+            scope = viewModelScope,
+            // Flow is set to emits value for when app is on the foreground
+            // 5 seconds stop delay is added to ensure it flows continuously
+            // for cases such as configuration change
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = runBlocking {
+                userPreferencesRepository.dayThresholdHour.first()
+            }
+        )
 
     fun updateDayThresholdHour(newHour : Int) {
         viewModelScope.launch {
-            _dayThresholdHourState.value = newHour
+            userPreferencesRepository.saveDayThresholdHour(newHour)
         }
     }
+
 
     /**
      * Changes less often

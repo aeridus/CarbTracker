@@ -15,7 +15,8 @@ object AppViewModelProvider {
         // Initializer for CarbTimeItemViewModel
         initializer {
             CarbTimeItemViewModel(
-                carbTrackerApplication().container.carbTimeItemsRepository
+                carbTrackerApplication().container.carbTimeItemsRepository,
+                carbTrackerApplication().container.userPreferencesRepository
             )
         }
     }
