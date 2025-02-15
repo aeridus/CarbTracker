@@ -8,8 +8,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -216,6 +218,7 @@ fun CarbTrackerPanel(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
+                    .border(BorderStroke(1.dp, colorScheme.onBackground))
             ) {
                 Box(
                     modifier = Modifier
@@ -299,6 +302,7 @@ fun NumberButton(
             containerColor = containerColor,
             contentColor = contentColor
         ),
+        border = BorderStroke(1.dp, colorScheme.onBackground),
         modifier = modifier
             .padding(8.dp)
     ) {
