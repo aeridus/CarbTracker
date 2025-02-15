@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.aerobush.carbtracker.data.CarbTimeItem
 import com.aerobush.carbtracker.data.CarbTimeItemsRepository
 import com.aerobush.carbtracker.data.CarbTrackerConstants
+import com.aerobush.carbtracker.data.ThemeMode
 import com.aerobush.carbtracker.data.TimeUtils
 import com.aerobush.carbtracker.data.UserPreferencesRepository
 import kotlinx.coroutines.delay
@@ -30,6 +31,32 @@ class CarbTimeItemViewModel(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     /**
+     * Changes based on user input
+     */
+    val themeUiState: StateFlow<ThemeUiState> =
+        userPreferencesRepository.themeMode.map { themeMode ->
+            ThemeUiState(
+                themeMode = themeMode
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = runBlocking {
+                ThemeUiState(
+                    themeMode = userPreferencesRepository.themeMode.first()
+                )
+            }
+        )
+
+    fun cycleThemeMode(currentThemeMode : ThemeMode) {
+        viewModelScope.launch {
+            val newThemeModeIndex = (currentThemeMode.ordinal + 1) % ThemeMode.entries.size
+
+            userPreferencesRepository.saveThemeMode(ThemeMode.entries[newThemeModeIndex])
+        }
+    }
+
+    /**
      * Changes frequently
      */
     private val _currentTimeState = MutableStateFlow<OffsetDateTime>(TimeUtils.getCurrentTime())
@@ -52,9 +79,6 @@ class CarbTimeItemViewModel(
             dayThresholdHour
         }.stateIn(
             scope = viewModelScope,
-            // Flow is set to emits value for when app is on the foreground
-            // 5 seconds stop delay is added to ensure it flows continuously
-            // for cases such as configuration change
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             initialValue = runBlocking {
                 userPreferencesRepository.dayThresholdHour.first()
@@ -177,6 +201,10 @@ class CarbTimeItemViewModel(
 /**
  * UI state for CarbTracker
  */
+data class ThemeUiState(
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+)
+
 data class CarbTrackerUiState(
     val dayThresholdHour: Int = CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR,
     val totalHours: Int = 24,

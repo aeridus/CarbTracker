@@ -7,6 +7,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aerobush.carbtracker.data.ThemeMode
 import com.aerobush.carbtracker.ui.item.CarbTimeItemViewModel
 import com.aerobush.carbtracker.ui.theme.CarbTrackerTheme
 import kotlinx.coroutines.launch
@@ -69,6 +72,7 @@ fun CarbTracker(
     viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val themeUiState = viewModel.themeUiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     var hasNotificationPermission = false
@@ -77,7 +81,15 @@ fun CarbTracker(
         onResult = { hasNotificationPermission = it }
     )
 
+    val currentThemeMode = themeUiState.value.themeMode
+
     CarbTrackerPanel(
+        currentThemeMode,
+        onThemeModeClick = {
+            coroutineScope.launch {
+                viewModel.cycleThemeMode(currentThemeMode)
+            }
+        },
         uiState.value.dayThresholdHour,
         onHourDecrease = {
             var newValue = uiState.value.dayThresholdHour - 1
@@ -124,6 +136,8 @@ fun CarbTracker(
 
 @Composable
 fun CarbTrackerPanel(
+    currentThemeMode: ThemeMode,
+    onThemeModeClick: () -> Unit,
     dayThresholdHour: Int,
     onHourDecrease: () -> Unit,
     onHourIncrease: () -> Unit,
@@ -150,6 +164,8 @@ fun CarbTrackerPanel(
                 .height(64.dp)
         ) {
             SettingButtons(
+                currentThemeMode,
+                onThemeModeClick,
                 dayThresholdHour,
                 onHourDecrease,
                 onHourIncrease
@@ -184,14 +200,30 @@ fun CarbTrackerPanel(
 
 @Composable
 fun SettingButtons(
+    currentThemeMode: ThemeMode,
+    onThemeModeClick: () -> Unit,
     dayThresholdHour: Int,
     onHourDecrease: () -> Unit,
     onHourIncrease: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    @DrawableRes var themeModeIcon: Int = R.drawable.cpu
+    @StringRes var themeModeIconDescription: Int = R.string.cpu
+    when (currentThemeMode) {
+        ThemeMode.DARK -> {
+            themeModeIcon = R.drawable.moon
+            themeModeIconDescription = R.string.moon
+        }
+        ThemeMode.LIGHT -> {
+            themeModeIcon = R.drawable.sun
+            themeModeIconDescription = R.string.sun
+        }
+        else -> { }
+    }
+
     Button(
         onClick = {
-
+            onThemeModeClick()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = colorScheme.onBackground,
@@ -200,14 +232,14 @@ fun SettingButtons(
         contentPadding = PaddingValues(0.dp),
         modifier = modifier
             .fillMaxHeight()
-            .padding(8.dp)
+            .padding(start = 8.dp, end = 8.dp, top = 16.dp, bottom = 16.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.cpu),
-            contentDescription = stringResource(R.string.sun),
+            painter = painterResource(themeModeIcon),
+            contentDescription = stringResource(themeModeIconDescription),
             colorFilter = ColorFilter.tint(colorScheme.background),
             modifier = Modifier
-                .height(32.dp)
+                .height(24.dp)
         )
     }
 
@@ -496,6 +528,8 @@ fun WeeklyBudget(
 fun CarbTrackerPreviewLight() {
     CarbTrackerTheme {
         CarbTrackerPanel(
+            currentThemeMode = ThemeMode.LIGHT,
+            onThemeModeClick = {},
             dayThresholdHour = 20,
             onHourDecrease = {},
             onHourIncrease = {},
@@ -516,6 +550,8 @@ fun CarbTrackerPreviewLight() {
 fun CarbTrackerPreviewDark() {
     CarbTrackerTheme(darkTheme = true) {
         CarbTrackerPanel(
+            currentThemeMode = ThemeMode.DARK,
+            onThemeModeClick = {},
             dayThresholdHour = 20,
             onHourDecrease = {},
             onHourIncrease = {},
