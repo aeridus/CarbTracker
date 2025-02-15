@@ -35,6 +35,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +58,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // enableEdgeToEdge()
         setContent {
-            CarbTrackerTheme {
+            val viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val themeUiState = viewModel.themeUiState.collectAsState()
+            CarbTrackerTheme (themeMode = themeUiState.value.themeMode) {
                 CarbTracker(
                     modifier = Modifier
                 )
