@@ -20,7 +20,7 @@ jobs:
     - name: Build Release APK
       run: ./gradlew assembleRelease
     - name: Upload APK
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: carbtracker.apk
         path: app/build/outputs/apk/release/app-release-unsigned.apk
