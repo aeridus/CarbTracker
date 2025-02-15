@@ -13,6 +13,6 @@ class CarbTrackerConstants {
         const val MAX_CARB_SERVINGS_PER_SNACK = 2
 
         // Potential User Preferences
-        const val DEFAULT_DAY_THRESHOLD_HOUR = 4L
+        const val DEFAULT_DAY_THRESHOLD_HOUR = 4
     }
 }

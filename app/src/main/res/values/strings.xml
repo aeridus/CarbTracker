@@ -19,4 +19,8 @@
     <string name="urgent_reminders">Urgent reminders</string>
     <string name="failed_to_notify_user">Failed to notify user that it was time to eat.</string>
     <string name="failed_to_delete_stale_items">Failed to delete stale items.</string>
+    <string name="sleeping">sleeping</string>
+    <string name="cpu">cpu</string>
+    <string name="moon">moon</string>
+    <string name="sun">sun</string>
 </resources>

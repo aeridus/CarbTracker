@@ -25,7 +25,7 @@ class TimeUtils {
             )
         }
 
-        fun getDayThresholdEpochMilli(dayThresholdHour: Long): Long {
+        fun getDayThresholdEpochMilli(dayThresholdHour: Int): Long {
             var dayThreshold = OffsetDateTime.now()
 
             // We want to look at the data from before midnight
@@ -35,7 +35,7 @@ class TimeUtils {
             }
 
             dayThreshold = dayThreshold
-                .withHour(dayThresholdHour.toInt())
+                .withHour(dayThresholdHour)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0)

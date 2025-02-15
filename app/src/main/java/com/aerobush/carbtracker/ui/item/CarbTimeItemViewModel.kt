@@ -41,6 +41,20 @@ class CarbTimeItemViewModel(
     }
 
     /**
+     * Changes based on user input
+     */
+    private val _dayThresholdHourState = MutableStateFlow<Int>(
+        CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
+    )
+    private val dayThresholdHourState: StateFlow<Int> = _dayThresholdHourState
+
+    fun updateDayThresholdHour(newHour : Int) {
+        viewModelScope.launch {
+            _dayThresholdHourState.value = newHour
+        }
+    }
+
+    /**
      * Changes less often
      */
     private val carbTimeItemsState: StateFlow<List<CarbTimeItem>> = carbTimeItemsRepository
@@ -55,12 +69,13 @@ class CarbTimeItemViewModel(
         )
 
     /**
-     * We want this to update with time changes or database changes
+     * We want this to update with time changes, user input, or database changes
      */
-    val uiState: StateFlow<CarbTrackerUiState> = currentTimeState
-        .combine(carbTimeItemsState) { currentTime, carbTimeItems ->
+    val uiState: StateFlow<CarbTrackerUiState> = combine(
+        currentTimeState, dayThresholdHourState, carbTimeItemsState
+    ) { currentTime, dayThresholdHour, carbTimeItems ->
             val dayThreshold = TimeUtils.getDayThresholdEpochMilli(
-                CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR
+                dayThresholdHour
             )
             val weekAgoThreshold = dayThreshold - Duration.ofDays(7).toMillis()
             val carbWeekItems = carbTimeItems.filter { it.time >= weekAgoThreshold }
@@ -110,6 +125,7 @@ class CarbTimeItemViewModel(
                             CarbTrackerConstants.MAX_CARB_SERVINGS_PER_SNACK) * totalDays
 
                 CarbTrackerUiState(
+                    dayThresholdHour = dayThresholdHour,
                     totalHours = totalHours,
                     totalMinutes = totalMinutes,
                     totalCarbServings = carbWeekItems.sumOf { it.carbServings },
@@ -148,6 +164,7 @@ class CarbTimeItemViewModel(
  * UI state for CarbTracker
  */
 data class CarbTrackerUiState(
+    val dayThresholdHour: Int = CarbTrackerConstants.DEFAULT_DAY_THRESHOLD_HOUR,
     val totalHours: Int = 24,
     val totalMinutes: Int = 0,
     val totalCarbServings: Int = 0,
