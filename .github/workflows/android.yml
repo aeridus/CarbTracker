@@ -9,18 +9,18 @@ jobs:
   Gradle:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout code
+    - name: Checkout Code
       uses: actions/checkout@v2
-    - name: setup jdk
-      uses: actions/setup-java@v1
+    - name: Setup JDK
+      uses: actions/setup-java@v2
       with:
         java-version: 17
-    - name: Make Gradle executable
+    - name: Make Gradle Executable
       run: chmod +x ./gradlew
     - name: Build Release APK
       run: ./gradlew assembleRelease
-    - name: Releasing using Hub
-      uses: sangatdesai/release-apk@main
-      env:
-       GITHUB_TOKEN: ${{ secrets.TOKEN }}
-       APP_FOLDER: app
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: carbtracker.apk
+        path: app/build/outputs/apk/release/app-release-unsigned.apk
