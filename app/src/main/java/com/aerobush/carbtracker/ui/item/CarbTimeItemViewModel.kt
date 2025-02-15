@@ -120,7 +120,7 @@ class CarbTimeItemViewModel(
 
             if (carbWeekItems.isEmpty())
             {
-                CarbTrackerUiState()
+                CarbTrackerUiState(dayThresholdHour = dayThresholdHour)
             }
             else {
                 val lastMealTime = TimeUtils.toOffsetDateTime(carbWeekItems.last().time)
