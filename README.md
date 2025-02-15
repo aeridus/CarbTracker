@@ -15,6 +15,9 @@ This app helps track regularly timed carb intake throughout the day, to even out
 * 4 hours from the last time you ate, you will be notified that you're Starving
 * Recording any meal or snack in the app will reset the timer
 * The last week of data is tracked to see if your carb intake is within the ideal range
+* The topmost button allows you to change the theme between System/Dark/Light
+* The number in the top right is the day threshold hour, adjustable with +/-
+  * I recommend setting this to the middle of your usual sleep schedule
 
 ### Example Screenshots
 ![Light Theme For App](CarbTrackerLight.png)
