@@ -548,7 +548,7 @@ fun CarbTrackerPreviewLight() {
 @Preview(showBackground = true)
 @Composable
 fun CarbTrackerPreviewDark() {
-    CarbTrackerTheme(darkTheme = true) {
+    CarbTrackerTheme(isSystemInDarkTheme = true) {
         CarbTrackerPanel(
             currentThemeMode = ThemeMode.DARK,
             onThemeModeClick = {},

@@ -8,7 +8,12 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aerobush.carbtracker.AppViewModelProvider
+import com.aerobush.carbtracker.data.ThemeMode
+import com.aerobush.carbtracker.ui.item.CarbTimeItemViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = Green80,
@@ -44,11 +49,18 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun CarbTrackerTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
+    isSystemInDarkTheme: Boolean = isSystemInDarkTheme(),
+    viewModel: CarbTimeItemViewModel = viewModel(factory = AppViewModelProvider.Factory),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val themeUiState = viewModel.themeUiState.collectAsState()
+    val darkTheme = when (themeUiState.value.themeMode) {
+        ThemeMode.DARK -> true
+        ThemeMode.LIGHT -> false
+        else -> isSystemInDarkTheme
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
