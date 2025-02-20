@@ -285,10 +285,10 @@ fun SettingButtons(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxHeight()
-            .width(32.dp)
+            .width(48.dp)
     ) {
         Text(
-            text = dayThresholdHour.toString(),
+            text = "$dayThresholdHour:00",
             color = colorScheme.onBackground,
             modifier = Modifier
         )
